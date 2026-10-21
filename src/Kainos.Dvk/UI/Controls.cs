@@ -77,7 +77,7 @@ namespace Kainos.Dvk.UI
             }
             int pad = _t.S(6);
             using (Font key = _t.Font(_t.S(11), true))
-            using (Font name = _t.Font(_t.S(12), false))
+            using (Font name = _t.Font(Math.Max(_t.S(12), Math.Min(_t.S(18), Height / 4f)), false))      // larger in a taller tile
             using (Font small = _t.Font(_t.S(10), false))
             {
                 string k = "F" + Slot.Number;

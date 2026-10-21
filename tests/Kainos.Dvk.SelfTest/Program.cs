@@ -198,7 +198,7 @@ namespace Kainos.Dvk.SelfTest
             // 7. the module: F-keys and Esc through the key handler, the pane drawn; and on an older Kainos
             {
                 FakeHost mh = new FakeHost(folder("module")) { Speed = Speed };
-                using (Form f = new Form { Width = 960, Height = 190, StartPosition = FormStartPosition.Manual, Location = new Point(-2000, -2000), ShowInTaskbar = false })
+                using (Form f = new Form { Width = 1700, Height = 120, StartPosition = FormStartPosition.Manual, Location = new Point(-2000, -2000), ShowInTaskbar = false })
                 {
                     mh.Window = null;
                     DvkModule mod = new DvkModule();
@@ -209,7 +209,8 @@ namespace Kainos.Dvk.SelfTest
                     f.Show();
                     mh.Window = f;
                     mh.Menus[0].Click();
-                    check(pane.IsOpen && mh.Keys != null, "opened from the Modes menu: the F-keys handed over");
+                    check(mh.DockLabel == "DVK" && mh.Menus.Count == 1, "a DVK button in the dock (and the Tools menu), nothing in Modes");
+                    check(pane.IsOpen && mh.Keys != null && mh.Menus[0].Checked, "opened from its DVK button: lit, the F-keys handed over");
                     // a recording for F2 straight into the store, then F2 sends it and Esc stops it
                     DvkPane dp = (DvkPane)pane.Content;
                     FieldInfoEngine(mod).Store.Store(FieldInfoEngine(mod).Store.Slots[1], words(0, 3), 48000);
@@ -227,7 +228,7 @@ namespace Kainos.Dvk.SelfTest
                     using (Bitmap b = new Bitmap(pc.Width, pc.Height)) { pc.DrawToBitmap(b, new Rectangle(Point.Empty, b.Size)); b.Save(png, ImageFormat.Png); }
                     check(File.Exists(png), "the pane drawn: " + png);
                     mh.Menus[0].Click();
-                    check(!pane.IsOpen && mh.Keys == null, "closed: the F-keys given back");
+                    check(!pane.IsOpen && mh.Keys == null && !mh.Menus[0].Checked, "closed: the F-keys given back, the button unlit");
                     mod.Stop();
                     mod.Dispose();
                     f.Close();

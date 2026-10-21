@@ -2,7 +2,8 @@
 
 Kainos Voice Keyer: a digital voice keyer, as a downloadable module (Setup > Modules). 12 recordings on F1 - F12,
 recorded from the mic as Kainos has it and sent in the same place, so the mic gain and the whole transmit chain
-(EQ, Kainos Audio, AetherVoice) treat them as the live voice. Needs Kainos 1.0.12 (IKainosVoice).
+(EQ, Kainos Audio, AetherVoice) treat them as the live voice. Needs Kainos 1.0.12 (IKainosVoice); opened from its
+DVK button in the left-hand dock, or Tools > Voice Keyer (DVK).
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -48,7 +49,13 @@ namespace Kainos.Dvk
             _pane = host.CreatePane("Kainos Voice Keyer", _view);
             _pane.Closed += (s, e) => close();
             _view.PopToggled += () => _pane.Popped = !_pane.Popped;
-            _menu = host.AddMenuItem("Voice Keyer", "The digital voice keyer (F1 - F12): open / close.", () => { if (_pane.IsOpen) close(); else open(); });
+            // a tool rather than a mode: a DVK button in the left-hand dock (and the Tools menu); the Modes menu on a
+            // Kainos without the dock interface, or with its spare dock buttons all taken
+            System.Action toggle = () => { if (_pane.IsOpen) close(); else open(); };
+            const string tip = "The digital voice keyer (F1 - F12): open / close.";
+            IKainosDock dock = host as IKainosDock;
+            _menu = dock != null ? dock.AddDockButton("DVK", "Voice Keyer (DVK)", tip, toggle) : null;
+            if (_menu == null) _menu = host.AddMenuItem("Voice Keyer", tip, toggle);
             host.Log("Voice Keyer " + ModuleVersion + " started");
             if (host.GetSetting("open", "0") == "1") open();
         }

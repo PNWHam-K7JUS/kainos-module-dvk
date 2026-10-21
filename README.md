@@ -6,7 +6,7 @@ On a FlexRadio the voice keyer lives in the radio. The Hermes Lite 2 has nothing
 
 ## Using it
 
-Open it from the **Modes** menu. It docks under the panadapter like the RTTY and CW terminals, or pops out into its own window.
+It's a tool rather than a mode: open it with the **DVK** button in the left-hand dock (lit while it's open), or **Tools > Voice Keyer (DVK)** (on the menu bar in the Classic layout). It docks under the panadapter like the RTTY and CW terminals, or pops out into its own window.
 
 - **12 slots, F1 to F12.** Press a slot's F-key (or double-click it) to send it. **Esc** stops. Ctrl+F1 to F10 stay Kainos's CWX memories.
 - **REC** records the selected slot from your mic, until **STOP** or Esc (up to 2 minutes). The quiet before your first word and after your last is cut off, so a CQ starts at once. The level meter shows your mic while recording: aim for gold on the loudest words, never red.
@@ -27,7 +27,7 @@ Setup > Modules > **Install from file...** with `kainos-dvk-<version>.zip`, or f
 
 | Part | What it does |
 |---|---|
-| `DvkModule.cs` | The module: the Modes menu item and the pane. Asks Kainos for `IKainosVoice` (Kainos 1.0.12); on an older Kainos the menu item says what it needs. |
+| `DvkModule.cs` | The module: its DVK dock button (`IKainosDock`, with a Tools menu item) and the pane. Asks Kainos for `IKainosVoice` (Kainos 1.0.12); on an older Kainos a Modes menu item says what it needs. |
 | `DvkEngine.cs` | Its own thread: recording (`ReadMic`, trimmed at 30 dB under the loudest, 0.1 s kept each side), preview (`PreviewWrite`), sending (`TxStart`, MOX, about 0.25 s kept queued, then un-keyed) and repeat CQ. |
 | `Slots.cs` | The 12 recordings: a WAV each, names and levels in the settings; WAV import (resampled to 48 kHz) and export. |
 | `Wav.cs` | WAV reading (8/16/24/32-bit PCM or float, mono or stereo) and writing (16-bit mono), and resampling. |

@@ -82,9 +82,19 @@ namespace Kainos.Dvk.SelfTest
         public bool TxOn { get { return _txOn; } }
     }
 
-    internal class FakeHost : OldHost, IKainosVoice
+    internal class FakeHost : OldHost, IKainosVoice, IKainosDock
     {
         public FakeHost(string data) : base(data) { }
+
+        // the dock button (kept in Menus too, so the tests click it the same way)
+        public string DockLabel, DockMenuText;
+        public IKainosMenuItem AddDockButton(string label, string menuText, string toolTip, Action click)
+        {
+            DockLabel = label; DockMenuText = menuText;
+            FakeMenu m = new FakeMenu { Text = menuText, Click = click };
+            Menus.Add(m);
+            return m;
+        }
         public override string KainosVersion { get { return "1.0.12"; } }
 
         // the mic: what's queued (then silence), at Speed times real time; Dead: no samples at all

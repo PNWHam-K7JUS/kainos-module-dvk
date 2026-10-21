@@ -16,8 +16,12 @@ using Kainos.Modules;
 
 namespace Kainos.Dvk.UI
 {
-    internal class DvkPane : Panel
+    // One row of buttons, one row of the 12 slots: short, so it asks Kainos (1.0.12) to dock it at that height
+    internal class DvkPane : Panel, IKainosPaneHeight
     {
+        public int PreferredHeight { get { return 80; } }      // design px: the buttons, and slots 44 high
+        public int MinimumHeight { get { return 70; } }
+
         private static readonly int[] Gaps = { 3, 5, 8, 10, 15, 20, 30, 45, 60 };
 
         private readonly IKainosHost _host;
@@ -149,12 +153,13 @@ namespace Kainos.Dvk.UI
             _status.SetBounds(x + pad, y, Math.Max(0, right - x - pad), bh);
             y += bh + pad;
 
-            // the slots: 6 a row, two rows (F1 - F6 above F7 - F12, as on a keyboard's function keys)
-            int cols = 6, rows = 2;
+            // the slots: F1 - F12 in one row, as on a keyboard, filling the rest of the pane's height (Kainos keeps each
+            // docked pane's own height: drag the bar above it)
+            int cols = SlotStore.Count;
             int tw = (Width - pad * (cols + 1)) / cols;
-            int th = Math.Max(_t.S(30), Math.Min(_t.S(64), (Height - y - pad * (rows + 1)) / rows));
+            int th = Math.Max(_t.S(30), Height - y - pad);
             for (int i = 0; i < _tiles.Length; i++)
-                _tiles[i].SetBounds(pad + (i % cols) * (tw + pad), y + (i / cols) * (th + pad), tw, th);
+                _tiles[i].SetBounds(pad + i * (tw + pad), y, tw, th);
         }
 
         // ---- what's showing ----
