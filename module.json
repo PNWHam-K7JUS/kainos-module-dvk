@@ -1,0 +1,12 @@
+{
+  "id": "dvk",
+  "name": "Voice Keyer (DVK)",
+  "description": "A digital voice keyer: 12 recordings on F1 - F12, recorded from your mic and sent through your whole transmit chain so they sound like you. Preview, repeat CQ with a listening gap, WAV import and export.",
+  "version": "0.1.0",
+  "api": 1,
+  "minKainos": "1.0.12",
+  "entry": "Kainos.Dvk.dll",
+  "author": "Justin Cron K7JUS",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://github.com/PNWHam-K7JUS/kainos-module-dvk"
+}
