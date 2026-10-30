@@ -134,6 +134,27 @@ namespace Kainos.Dvk.SelfTest
         public void SetKeyHandler(Func<Keys, bool> handler) { Keys = handler; }
     }
 
+    // Kainos 1.0.15: the message bus (and CW, unused by the keyer)
+    internal class KeyerHost : FakeHost, IKainosKeyer
+    {
+        public KeyerHost(string data) : base(data) { }
+        public override string KainosVersion { get { return "1.0.15"; } }
+        private readonly Dictionary<string, Action<string>> _subs = new Dictionary<string, Action<string>>();
+        public readonly List<string> Said = new List<string>();
+        public string SendCw(string text) { return "no CW here"; }
+        public bool CwSending { get { return false; } }
+        public void StopCw() { }
+        public int Publish(string topic, string message)
+        {
+            if (topic == "dvk.status") { lock (Said) Said.Add(message); return 1; }
+            Action<string> h;
+            if (!_subs.TryGetValue(topic, out h)) return 0;
+            BeginInvoke(() => h(message));
+            return 1;
+        }
+        public void Subscribe(string topic, Action<string> handler) { if (handler == null) _subs.Remove(topic); else _subs[topic] = handler; }
+    }
+
     internal class FakeTheme : IKainosTheme
     {
         public static readonly FakeTheme Instance = new FakeTheme();

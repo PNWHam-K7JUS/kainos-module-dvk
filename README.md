@@ -17,6 +17,8 @@ It's a tool rather than a mode: open it with the **DVK** button in the left-hand
 
 **It sounds like you.** The recording is taken from the mic as Kainos has it (radio mic, sound card, VAC or ASIO, after VAC and before the mic gain), and played back in the same place. So the mic gain and your whole transmit chain (TX EQ, Kainos Audio, AetherVoice, the compressor) treat it exactly as your live voice. If you change your transmit audio, your recordings change with it.
 
+**From a logger.** With Kainos 1.0.15 or later, another module (the Logbook's contest page) can send a slot or stop the keyer: its Enter and F1 / F2 / F3 send slots 1, 2 and 3 (CQ, your exchange, TU). The keyer's pane needn't be open. The same safety rules apply.
+
 **Safety.** It sends only in voice modes (LSB, USB, DSB, AM, SAM, FM). It stops at once on STOP or Esc, if the radio is un-keyed elsewhere (the MOX button, a foot switch), or if the radio doesn't go into transmit within 2 seconds. A repeat gives up if you transmit in its listening gap.
 
 ## Installing

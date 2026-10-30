@@ -197,7 +197,7 @@ namespace Kainos.Dvk.SelfTest
 
             // 7. the module: F-keys and Esc through the key handler, the pane drawn; and on an older Kainos
             {
-                FakeHost mh = new FakeHost(folder("module")) { Speed = Speed };
+                KeyerHost mh = new KeyerHost(folder("module")) { Speed = Speed };
                 using (Form f = new Form { Width = 1700, Height = 120, StartPosition = FormStartPosition.Manual, Location = new Point(-2000, -2000), ShowInTaskbar = false })
                 {
                     mh.Window = null;
@@ -229,6 +229,20 @@ namespace Kainos.Dvk.SelfTest
                     check(File.Exists(png), "the pane drawn: " + png);
                     mh.Menus[0].Click();
                     check(!pane.IsOpen && mh.Keys == null && !mh.Menus[0].Checked, "closed: the F-keys given back, the button unlit");
+                    // another module (the Logbook) sends a slot through Kainos 1.0.15's message bus, with the pane closed
+                    check(mh.Publish("dvk.send", "2") == 1 && waitPump(() => mh.Mox, 2), "dvk.send 2 from another module: F2 goes out, the pane closed");
+                    check(!pane.IsOpen, "and the pane stays closed (another module's pane keeps the dock)");
+                    mh.Publish("dvk.stop", "");
+                    check(waitPump(() => !mh.Mox && FieldInfoEngine(mod).State == DvkState.Idle, 2), "dvk.stop: stopped, un-keyed");
+                    mh.Publish("dvk.send", "5");
+                    check(waitPump(() => { lock (mh.Said) return mh.Said.Any(x => x.Contains("F5 is empty")); }, 2) && !mh.Mox, "dvk.send 5 (empty): not keyed, and the keyer says why on dvk.status");
+                    mh.ModeName = "CWU";
+                    mh.Publish("dvk.send", "2");
+                    check(waitPump(() => { lock (mh.Said) return mh.Said.Any(x => x.Contains("voice modes only")); }, 2) && !mh.Mox, "dvk.send in CW: not keyed (voice modes only)");
+                    mh.ModeName = "USB";
+                    mh.Publish("dvk.send", "x13");
+                    pumpFor(0.2);
+                    check(!mh.Mox, "dvk.send with a bad slot: ignored");
                     mod.Stop();
                     mod.Dispose();
                     f.Close();

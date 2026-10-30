@@ -56,6 +56,23 @@ namespace Kainos.Dvk
             IKainosDock dock = host as IKainosDock;
             _menu = dock != null ? dock.AddDockButton("DVK", "Voice Keyer (DVK)", tip, toggle) : null;
             if (_menu == null) _menu = host.AddMenuItem("Voice Keyer", tip, toggle);
+            // other modules (a logger's Enter / F1 - F3) can send a slot, or stop: Kainos 1.0.15's message bus. The pane
+            // needn't be open (opening it could move another module's pane out of the dock); the engine's own checks
+            // still apply (voice modes only, an empty slot says so).
+            IKainosKeyer keyer = host as IKainosKeyer;
+            if (keyer != null)
+            {
+                keyer.Subscribe("dvk.send", m =>
+                {
+                    int n;
+                    if (!int.TryParse(m, out n) || n < 1 || n > SlotStore.Count) return;
+                    _engine.Start();
+                    _engine.Play(n);
+                });
+                keyer.Subscribe("dvk.stop", m => _engine.StopNow());
+                // what the keyer has to say ("F2 is empty", "voice modes only") reaches the module that asked
+                _engine.Status += s => keyer.Publish("dvk.status", s);
+            }
             host.Log("Voice Keyer " + ModuleVersion + " started");
             if (host.GetSetting("open", "0") == "1") open();
         }
